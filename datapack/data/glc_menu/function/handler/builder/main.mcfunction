@@ -2,6 +2,9 @@
 # Ana Menü Builder
 # ═══════════════════════════════════════════════════
 
+# Yeni: Loading Dialog Göster...
+function glc_menu:handler/dialog/loading
+
 # Ana menü JSON'ı hazırla
 data modify storage mc:dialog ui set value {type:"minecraft:multi_action",title:{"text":"🎮 GULCE İzin Yönetimi","color":"gold","bold":true},body:{type:"minecraft:plain_message",contents:"§l§a✨ İzinleri buradan yönetebilirsiniz\n\n§7• İzin Listesi (Yürüt/Düzenle/Sil)\n§7• Yeni İzin Ekle"},can_close_with_escape:true,pause:false,"columns":1,actions:[]}
 
@@ -13,4 +16,5 @@ data modify storage mc:dialog ui.actions append value {label:"➕ Yeni İzin Ekl
 data modify storage mc:dialog ui.actions append value {label:"◀️ Ana Panel",action:{type:"minecraft:run_command",command:"/trigger gulce_trigger set 1"}}
 
 # Dialog aç
+
 function glc_menu:handler/dialog/open with storage mc:dialog
