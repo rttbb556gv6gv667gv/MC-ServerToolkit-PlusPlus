@@ -16,3 +16,5 @@ data modify storage mc:dialog ui.actions append value {label:"➕ Yeni İzin Ekl
 data modify storage mc:dialog ui.actions append value {label:"◀️ Ana Panel",action:{type:"minecraft:run_command",command:"/trigger gulce_trigger set 1"}}
 
 data modify storage mc:dialog ui.actions append value {label:"⚠ Toplu Eylemler",action:{type:"minecraft:run_command",command:"/trigger gulce_menu set 3"}}
+
+data modify storage mc:dialog ui.actions append value {label:"⏺ Düzenle",action:{type:"minecraft:show_dialog",dialog:{type:"minecraft:multi_action",title:"",inputs:[{type:"minecraft:text",key:"id",label:"ID",label_visible:1b,max_length:2000000000}],can_close_with_escape:1b,pause:0b,after_action:"close",columns:1,actions:[{label:"İleri",action:{type:"minecraft:dynamic/run_command",template:"/function glc_menu:handler/builder/edit_single {id:\"$(id)\"}"}}]}}}
