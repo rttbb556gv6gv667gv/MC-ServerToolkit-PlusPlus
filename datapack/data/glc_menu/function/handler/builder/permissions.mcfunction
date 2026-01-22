@@ -2,6 +2,9 @@
 # İzin Listesi Builder (Dinamik)
 # ═══════════════════════════════════════════════════
 
+# Loading Göster
+function glc_menu:handler/dialog/loading {tick:21}
+
 # İzin sayısını kontrol et
 execute store result score #perm_count gulce_id run data get storage mc:handler data.permissions
 
@@ -19,6 +22,3 @@ function glc_menu:handler/builder/build_loop
 
 # Geri butonu ekle
 data modify storage mc:dialog ui.actions append value {label:"◀️ Geri","width":48,action:{type:"minecraft:run_command",command:"/trigger gulce_menu set 1"}}
-
-# Dialog aç
-function glc_menu:handler/dialog/open with storage mc:dialog
