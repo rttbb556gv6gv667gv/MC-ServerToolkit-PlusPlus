@@ -14,3 +14,5 @@ data modify storage mc:dialog ui.actions append value {label:"📋 İzin Listesi
 data modify storage mc:dialog ui.actions append value {label:"➕ Yeni İzin Ekle",action:{type:"minecraft:show_dialog",dialog:{type:"minecraft:multi_action",title:"➕ Yeni İzin Ekle",inputs:[{type:"minecraft:text",key:"id",label:"ID",max_length:100},{type:"minecraft:text",key:"player",label:"Oyuncu",max_length:100},{type:"minecraft:text",key:"permission",label:"İzin Adı",max_length:100},{type:"minecraft:text",key:"level",label:"Seviye",initial:"1",max_length:10}],actions:[{label:"✅ Ekle",action:{type:"minecraft:dynamic/run_command",template:"/function custom_admin:add/permission {id:\"$(id)\",player:\"$(player)\",permission:\"$(permission)\",level:$(level)}"}}]}}}
 
 data modify storage mc:dialog ui.actions append value {label:"◀️ Ana Panel",action:{type:"minecraft:run_command",command:"/trigger gulce_trigger set 1"}}
+
+data modify storage mc:dialog ui.actions append value {label:"⚠ Toplu Eylemler",action:{type:"minecraft:run_command",command:"/trigger gulce_menu set 3"}}
