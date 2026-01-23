@@ -11,7 +11,7 @@ tag @s add glc.show_pending
 tag @s add closed.glc
 
 # Yetki Kontrol
-$schedule function glc_menu:handler/dialog/not_permission $(tick)t
+schedule function glc_menu:handler/dialog/not_permission 26t
 
 # Dialog'u Göster
 $execute as @p[tag=gulce_admin,limit=1,sort=arbitrary] at @s positioned ~ ~ ~ rotated as @s run schedule function glc_menu:handler/dialog/open $(tick)t
