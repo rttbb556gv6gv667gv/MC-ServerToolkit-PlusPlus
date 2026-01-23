@@ -16,15 +16,6 @@
       "initial": 50
     },
     {
-      "type": "minecraft:number_range",
-      "key": "cl_second",
-      "label": "Temizleme Süresi (saniye)",
-      "start": 1,
-      "end": 500,
-      "step": 1,
-      "initial": 50
-    },
-    {
       "type": "minecraft:single_option",
       "key": "diamond_to_emerald_recipe",
       "label": "Elmas → Zümrüt Tarif Modu",
@@ -148,7 +139,7 @@
       "width": 119,
       "action": {
         "type": "minecraft:dynamic/run_command",
-        "template": "/function gulce_adminpower_addons:config/load {\"load_second\":\"$(load_second)\",\"clear_second\":\"$(cl_second)\",\"diamond_to_emerald_recipe\":\"$(diamond_to_emerald_recipe)\",\"level\":$(level)}"
+        "template": "/function gulce_adminpower_addons:config/load {\"load_second\":\"$(load_second)\",\"diamond_to_emerald_recipe\":\"$(diamond_to_emerald_recipe)\",\"level\":$(level)}"
       }
     },
     {
@@ -166,6 +157,18 @@
       "action": {
         "type": "minecraft:run_command",
         "command": "/dialog clear @s"
+      }
+    },
+    {
+      "label": {
+        "text": "Devre dışı bırak...",
+        "color": "gold",
+        "bold": true,
+        "italic": false
+      },
+      "action": {
+        "type": "minecraft:run_command",
+        "command": "/function vc_experimental:disable_all"
       }
     }
   ]
