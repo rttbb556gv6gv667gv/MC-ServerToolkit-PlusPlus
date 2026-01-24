@@ -1,4 +1,5 @@
-$data merge storage mc:config {Config:{dialog:{Auto:$(dialog_auto)}}}
+$data modify storage mc:config Config set value {dialog:{Auto:$(dialog_auto)}}
 
 # YAKINDA
+
 # data merge storage mc:config {Config:{}}
