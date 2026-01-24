@@ -3,8 +3,8 @@
 # ═══════════════════════════════════════════════════
 
 # Loading göster
-scoreboard players set @s gulce_load.dialog 4
-function glc_menu:handler/dialog/loading {tick:30}
+scoreboard players set @s gulce_load.dialog 20
+function glc_menu:handler/dialog/loading
 
 # İzin sayısını kontrol et
 execute store result score #perm_count gulce_id run data get storage mc:handler data.permissions
@@ -23,3 +23,4 @@ function glc_menu:handler/builder/build_loop
 
 # Geri butonu ekle
 data modify storage mc:dialog ui.actions append value {label:"◀️ Geri","width":48,action:{type:"minecraft:run_command",command:"/trigger gulce_menu set 1"}}
+
