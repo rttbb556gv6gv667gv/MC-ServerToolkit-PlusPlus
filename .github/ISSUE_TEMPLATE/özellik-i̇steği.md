@@ -1,7 +1,7 @@
 ---
-name: "✨ Özellik İsteği"
+name: Özellik İsteği
 about: Datapack için yeni bir özellik veya iyileştirme önerin
-title: "[Özellik]"
+title: "[Özellik] "
 labels: enhancement
 assignees: rttbb556gv6gv667gv
 

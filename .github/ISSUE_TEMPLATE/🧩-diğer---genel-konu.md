@@ -1,8 +1,8 @@
 ---
 name: "\U0001F9E9 Diğer / Genel Konu"
 about: Yukarıdaki kategorilere uymayan konular için
-title: "[Genel]"
-labels: ''
+title: "[Genel] "
+labels: other
 assignees: rttbb556gv6gv667gv
 
 ---

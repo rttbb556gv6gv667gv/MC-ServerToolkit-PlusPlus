@@ -1,7 +1,7 @@
 ---
 name: Hata Bildirimi
 about: Datapack'te oluşan bir hata veya beklenmeyen davranışı bildirin
-title: "[Hata]"
+title: "[Hata] "
 labels: bug
 assignees: rttbb556gv6gv667gv
 
