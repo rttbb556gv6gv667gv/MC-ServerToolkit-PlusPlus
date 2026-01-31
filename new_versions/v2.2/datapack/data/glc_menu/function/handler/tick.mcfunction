@@ -11,6 +11,9 @@ scoreboard players remove @a[scores={gulce_load.dialog=1..}] gulce_load.dialog 1
 # Sadece 0'a düştüğünde BİR KEZ göster
 execute as @a[scores={gulce_load.dialog=0},tag=glc.show_pending] run function glc_menu:handler/dialog/open
 
+# Temp ⬅ UI
+data modify storage glc_menu:names temp.ui set from storage mc:dialog ui
+
 # Tag temizliği
 tag @a[tag=closed.glc] remove closed.glc
 tag @a[tag=glc.close_dialog] remove glc.close_dialog
