@@ -1,2 +1,8 @@
 blank_issues_enabled: true
-contact_links: []
+contact_links:
+  - name: "Planet Minecraft'ta İndir"
+    url: "https://www.planetminecraft.com/data-pack/gulceos-6777434/"
+    about: "Datapack'i Planet Minecraft'tan da indirebilirsiniz"
+  - name: "Geliştirici GitHub Profili"
+    url: "https://github.com/rttbb556gv6gv667gv"
+    about: "Geliştirici hakkında daha fazla bilgi"
