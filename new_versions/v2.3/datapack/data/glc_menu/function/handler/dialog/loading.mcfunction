@@ -12,8 +12,5 @@ tag @s add closed.glc
 data remove entity @e[limit=1,type=minecraft:interaction] attack.player[]
 tag @e[type=minecraft:interaction,tag=!_glcMenu] add _glcMenu
 
-# Yetki Kontrol
-schedule function glc_menu:handler/dialog/not_permission 26t
-
 # Dialog'u Göster
 # Disabled: $execute as @p[tag=gulce_admin,limit=1,sort=arbitrary] at @s positioned ~ ~ ~ rotated as @s run schedule function glc_menu:handler/dialog/open $(tick)t

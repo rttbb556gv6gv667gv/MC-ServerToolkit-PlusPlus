@@ -8,6 +8,10 @@ function glc_menu:handler/utils/player_name
 # ui parametresini mc:dialog'dan glc_menu:names'e kopyala
 data modify storage glc_menu:names temp.ui set from storage mc:dialog ui
 
+# Yetki kontrol
+execute unless entity @s[tag=gulce_admin] run function glc_menu:handler/dialog/not_permission with storage glc_menu:names temp
+execute unless entity @s[tag=gulce_admin] run return 0
+
 # Dialog göster (NAME ve ui storage'dan)
 function glc_menu:handler/dialog/show_final with storage glc_menu:names temp
 
