@@ -5,10 +5,10 @@
 Bu paket, Minecraft datapack'iniz için tamamen yenilenmiş bir izin sistemi içerir:
 
 ### 📁 Dosyalar
-1. **datapack_improved.zip** - Geliştirilmiş datapack (187 KB)
-2. **PERMISSIONS_GUIDE.md** - Tam dokümantasyon (8 KB)
-3. **QUICK_START.md** - Hızlı başlangıç rehberi (4.8 KB)
-4. **CHANGELOG.md** - Detaylı değişiklik listesi (5.7 KB)
+1. **datapack/** - Geliştirilmiş datapack (187 KB) (Klasör)
+3. **PERMISSIONS_GUIDE.md** - Tam dokümantasyon (8 KB)
+4. **QUICK_START.md** - Hızlı başlangıç rehberi (4.8 KB)
+5. **CHANGELOG.md** - Detaylı değişiklik listesi (5.7 KB)
 
 ---
 
