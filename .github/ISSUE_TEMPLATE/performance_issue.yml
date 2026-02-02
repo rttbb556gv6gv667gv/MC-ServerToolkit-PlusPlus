@@ -1,0 +1,56 @@
+name: Performance Issue
+description: Lag, TPS düşüşü, aşırı tick kullanımı
+title: "[Performans] "
+labels:
+  - performance
+assignees:
+  - rttbb556gv6gv667gv
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🐢 Performans Problemi
+        FPS/TPS düşüyorsa, burada yakalıyoruz.
+
+  - type: input
+    id: mc_version
+    attributes:
+      label: Minecraft Sürümü
+    validations:
+      required: true
+
+  - type: input
+    id: tps
+    attributes:
+      label: TPS (varsa ölçüm)
+      placeholder: "20 / 15 / 10"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Etki Alanı
+      options:
+        - Tüm sunucu
+        - Belirli oyuncular
+        - Belirli modül / menü
+    validations:
+      required: true
+
+  - type: textarea
+    id: profiler
+    attributes:
+      label: Profiling Sonucu
+      description: spark, timings, /debug start-stop
+      placeholder: Paste link veya çıktı
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Ek Notlar
+    validations:
+      required: false
