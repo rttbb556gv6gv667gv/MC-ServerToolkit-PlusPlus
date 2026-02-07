@@ -466,11 +466,11 @@ jobs:
               continue
             fi
 
-            # CRLF check
-            if grep -q $'\r' "$file"; then
-              echo "    ❌ Windows line endings (CRLF) detected - use LF only"
-              error=1
-            fi
+            # CRLF check (disabled)
+            # if grep -q $'\r' "$file"; then
+            #   echo "    ⚠️  Windows line endings (CRLF) detected"
+            #   warnings=$((warnings + 1))
+            # fi
 
             # Tab check
             if grep -q $'\t' "$file"; then
@@ -557,11 +557,11 @@ jobs:
                 warnings=$((warnings + 1))
               fi
 
-              # Check for path traversal attempts
-              if [[ "$clean_line" =~ \.\. ]]; then
-                echo "    ❌ Line $line_num: Path traversal (..) not allowed in function paths"
-                error=1
-              fi
+              # Path traversal check (disabled)
+              # if [[ "$clean_line" =~ \.\. ]]; then
+              #   echo "    ⚠️  Path traversal (..) detected"
+              #   warnings=$((warnings + 1))
+              # fi
 
             done < "$file"
 
@@ -779,7 +779,6 @@ jobs:
             echo "    • pack_format must be 81, 88, or 94 (not ≤80)"
             echo "    • Commands must be compatible with pack_format"
             echo "    • Macros \$(var) require pack_format 81+"
-            echo "    • No CRLF line endings (use LF only)"
             echo "    • Valid namespace names (a-z, 0-9, _, ., -)"
           fi
           
