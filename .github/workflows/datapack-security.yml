@@ -13,13 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write  # PR'a yorum yapabilmek için
+      pull-requests: write
     
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Tüm geçmişi çek (isteğe bağlı)
+          fetch-depth: 0
       
       - name: Scan datapack folders
         id: scan
@@ -27,7 +27,6 @@ jobs:
           FOUND=0
           DANGEROUS_FILES=()
           
-          # Tehlikeli dosyaları bul
           while IFS= read -r file; do
             echo "::error file=$file,title=Security Violation::Dangerous file detected in datapack directory"
             DANGEROUS_FILES+=("$file")
@@ -44,14 +43,13 @@ jobs:
             \) -path "*/datapack/*" 2>/dev/null
           )
           
-          # Sonuçları yazdır
           if [ "$FOUND" -eq 1 ]; then
-            echo "❌ Security scan failed!"
+            echo "Security scan failed!"
             echo "Found ${#DANGEROUS_FILES[@]} dangerous file(s):"
             printf '%s\n' "${DANGEROUS_FILES[@]}"
             exit 1
           else
-            echo "✅ Security scan passed - no dangerous files found"
+            echo "Security scan passed - no dangerous files found"
           fi
       
       - name: Comment on PR
