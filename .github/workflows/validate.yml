@@ -1,0 +1,59 @@
+name: Validate Datapack
+
+on:
+  pull_request:
+    paths:
+      - 'new_versions/**/datapack/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'new_versions/**/datapack/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Check JSON Syntax
+        run: |
+          echo "Checking JSON files..."
+          while IFS= read -r -d $'\0' file; do
+            echo "Validating: $file"
+            if ! jq empty "$file" 2>/dev/null; then
+              echo "Error: Invalid JSON: $file"
+              exit 1
+            fi
+          done < <(find new_versions -name "*.json" -type f -print0)
+          echo "All JSON files are valid!"
+
+      - name: Check MCMETA Files
+        run: |
+          echo "Checking pack.mcmeta files..."
+          found=0
+          while IFS= read -r -d $'\0' file; do
+            found=1
+            echo "Validating: $file"
+            if ! jq '.pack.pack_format' "$file" > /dev/null 2>&1; then
+              echo "Error: Invalid pack.mcmeta: $file"
+              exit 1
+            fi
+          done < <(find new_versions -name "pack.mcmeta" -type f -print0)
+          
+          if [ $found -eq 0 ]; then
+            echo "Error: No pack.mcmeta files found!"
+            exit 1
+          fi
+          echo "All pack.mcmeta files are valid!"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "==================================="
+          echo "Validation completed successfully!"
+          echo "==================================="
