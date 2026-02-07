@@ -66,6 +66,7 @@ jobs:
         warning_count=0
         
         find new_versions -name "*.mcfunction" -type f -print0 | while IFS= read -r -d '' file; do
+          filename=$(basename "$file")
           echo "Checking: $file"
           
           # Empty file check
@@ -86,21 +87,23 @@ jobs:
             error_found=1
           fi
           
-          # Check for macro functions (starting with $)
-          if echo "$file" | grep -qE '/\$[^/]+\.mcfunction$'; then
+          # Check for macro functions (filename starts with $)
+          if [[ "$filename" == \$* ]]; then
             # Check if the function uses macro syntax
             if ! grep -qE '\$\(' "$file"; then
-              echo "Warning: Macro function name detected but no macro syntax in: $file"
+              echo "Warning: Macro function '$filename' has no macro syntax"
+              echo "  -> File: $file"
               echo "  -> Macro functions should contain \$(parameter) syntax"
               warning_count=$((warning_count + 1))
             fi
           fi
           
           # Check for macro syntax in non-macro files
-          if ! echo "$file" | grep -qE '/\$[^/]+\.mcfunction$'; then
+          if [[ "$filename" != \$* ]]; then
             if grep -qE '\$\(' "$file"; then
-              echo "Warning: Macro syntax found in non-macro function: $file"
-              echo "  -> Function name should start with $ (e.g., \$function_name.mcfunction)"
+              echo "Warning: Macro syntax found in non-macro function '$filename'"
+              echo "  -> File: $file"
+              echo "  -> Function filename should start with \$ (e.g., \$function_name.mcfunction)"
               warning_count=$((warning_count + 1))
             fi
           fi
