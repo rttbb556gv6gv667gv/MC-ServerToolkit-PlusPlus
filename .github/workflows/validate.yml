@@ -23,37 +23,85 @@ jobs:
       - name: Check JSON Syntax
         run: |
           echo "Checking JSON files..."
+          error=0
           while IFS= read -r -d $'\0' file; do
             echo "Validating: $file"
             if ! jq empty "$file" 2>/dev/null; then
-              echo "Error: Invalid JSON: $file"
-              exit 1
+              echo "❌ Error: Invalid JSON: $file"
+              error=1
             fi
           done < <(find new_versions -name "*.json" -type f -print0)
-          echo "All JSON files are valid!"
+          
+          if [ $error -eq 0 ]; then
+            echo "✅ All JSON files are valid!"
+          else
+            exit 1
+          fi
 
       - name: Check MCMETA Files
         run: |
           echo "Checking pack.mcmeta files..."
           found=0
+          error=0
           while IFS= read -r -d $'\0' file; do
             found=1
             echo "Validating: $file"
-            if ! jq '.pack.pack_format' "$file" > /dev/null 2>&1; then
-              echo "Error: Invalid pack.mcmeta: $file"
-              exit 1
+            if ! jq -e '.pack.pack_format' "$file" > /dev/null 2>&1; then
+              echo "❌ Error: Missing pack_format in: $file"
+              error=1
+            fi
+            if ! jq -e '.pack.description' "$file" > /dev/null 2>&1; then
+              echo "⚠️  Warning: Missing description in: $file"
             fi
           done < <(find new_versions -name "pack.mcmeta" -type f -print0)
           
           if [ $found -eq 0 ]; then
-            echo "Error: No pack.mcmeta files found!"
+            echo "❌ Error: No pack.mcmeta files found!"
             exit 1
           fi
-          echo "All pack.mcmeta files are valid!"
+          
+          if [ $error -eq 1 ]; then
+            exit 1
+          fi
+          
+          echo "✅ All pack.mcmeta files are valid!"
+
+      - name: Check Directory Structure
+        run: |
+          echo "Checking datapack structure..."
+          error=0
+          
+          while IFS= read -r -d $'\0' datapack; do
+            datapack_dir=$(dirname "$datapack")
+            echo "Checking: $datapack_dir"
+            
+            if [ ! -d "$datapack_dir/data" ]; then
+              echo "❌ Error: Missing 'data' folder in: $datapack_dir"
+              error=1
+            fi
+          done < <(find new_versions -name "pack.mcmeta" -type f -print0)
+          
+          if [ $error -eq 0 ]; then
+            echo "✅ Datapack structure is valid!"
+          else
+            exit 1
+          fi
+
+      - name: Check Function Files
+        run: |
+          echo "Checking .mcfunction files..."
+          
+          count=0
+          while IFS= read -r -d $'\0' file; do
+            count=$((count + 1))
+          done < <(find new_versions -name "*.mcfunction" -type f -print0)
+          
+          echo "✅ Found $count .mcfunction files"
 
       - name: Summary
         if: success()
         run: |
-          echo "==================================="
-          echo "Validation completed successfully!"
-          echo "==================================="
+          echo ""
+          echo "=================================="
+          echo "✅ Datapack validation successful!"
+          echo "=================================="
