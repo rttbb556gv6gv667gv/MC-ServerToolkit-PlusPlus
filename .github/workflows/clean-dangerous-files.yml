@@ -3,11 +3,11 @@ name: Clean Dangerous Files
 on:
   push:
     paths:
-      - 'new_versions/**'
-  workflow_dispatch:
+      - "new_versions/**"
   pull_request:
     paths:
-      - 'new_versions/**'
+      - "new_versions/**"
+  workflow_dispatch:
 
 jobs:
   clean-files:
@@ -17,7 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Scan and delete dangerous files
@@ -25,78 +24,64 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo "🔍 Scanning for dangerous files in new_versions/*datapack*"
+          echo "🔍 Scanning for dangerous files"
 
           DANGEROUS_EXTENSIONS=("sh" "js" "exe" "bat" "cmd" "ps1" "py" "rb" "pl" "jar" "dll" "so" "dylib" "vbs" "com" "msi" "app" "deb" "rpm")
-
           DELETED_FILES=()
 
           FIND_PATTERN=""
           for ext in "${DANGEROUS_EXTENSIONS[@]}"; do
-            if [ -z "$FIND_PATTERN" ]; then
-              FIND_PATTERN="-name *.$ext"
-            else
-              FIND_PATTERN="$FIND_PATTERN -o -name *.$ext"
-            fi
+            FIND_PATTERN="$FIND_PATTERN -o -name *.$ext"
           done
+          FIND_PATTERN="${FIND_PATTERN# -o }"
 
           while IFS= read -r -d '' file; do
-            echo "⚠️  Found dangerous file: $file"
+            echo "⚠️ Found: $file"
 
-            if [ "${{ github.event_name }}" == "pull_request" ]; then
+            if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
               ext="${file##*.}"
-              echo "::error file=$file,title=Security: Dangerous file detected::.$ext files are not allowed in Minecraft datapacks."
+              echo "::error file=$file,title=Security violation::.$ext files are not allowed in datapacks."
               DELETED_FILES+=("$file")
             else
               rm -f "$file"
+              echo "🗑️ Deleted: $file"
               DELETED_FILES+=("$file")
-              echo "🗑️  Deleted: $file"
             fi
-          done < <(find new_versions -type f \( $FIND_PATTERN \) -path "*datapack*" -print0 2>/dev/null | sort -z -u)
+          done < <(
+            find new_versions -type f \( $FIND_PATTERN \) -path "*datapack*" -print0 2>/dev/null | sort -zu
+          )
 
-          FILE_COUNT=${#DELETED_FILES[@]}
+          COUNT="${#DELETED_FILES[@]}"
+          echo "file_count=$COUNT" >> "$GITHUB_OUTPUT"
 
-          if [ $FILE_COUNT -eq 0 ]; then
-            echo "✅ No dangerous files found."
-            echo "file_count=0" >> $GITHUB_OUTPUT
-          else
-            echo "file_count=$FILE_COUNT" >> $GITHUB_OUTPUT
+          if [ "$COUNT" -gt 0 ]; then
             printf '%s\n' "${DELETED_FILES[@]}" | sort -u > deleted_files.log
-
-            if [ "${{ github.event_name }}" == "pull_request" ]; then
-              echo "::error::PR contains dangerous files."
+            if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
               exit 1
             fi
           fi
 
-      - name: Commit changes if files were deleted
+      - name: Commit changes
         if: github.event_name != 'pull_request' && steps.scan.outputs.file_count != '0'
         run: |
-          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-
-          if [ -n "$(git status --porcelain)" ]; then
-            FILE_COUNT=$(wc -l < deleted_files.log)
-
-            git add -A
-            git commit -m "🛡️ Security: Auto-removed $FILE_COUNT dangerous file(s)"
-            git push
-          fi
+          git add -A
+          git commit -m "🛡️ Security: removed dangerous files"
+          git push
 
       - name: Upload deletion log
         if: always() && steps.scan.outputs.file_count != '0'
         uses: actions/upload-artifact@v4
         with:
-          name: deletion-log-${{ github.run_number }}-${{ github.run_attempt }}
+          name: deletion-log
           path: deleted_files.log
-          retention-days: 90
 
-      - name: Generate summary
+      - name: Summary
         if: always()
         run: |
-          echo "## 🛡️ Security Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "## 🛡️ Datapack Security Scan" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Workflow:** \`${{ github.workflow }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Event:** $GITHUB_EVENT_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "**Deleted files:** ${{ steps.scan.outputs.file_count }}" >> $GITHUB_STEP_SUMMARY
