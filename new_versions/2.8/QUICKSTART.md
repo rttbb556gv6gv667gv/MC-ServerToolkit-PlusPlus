@@ -11,7 +11,7 @@ https://modrinth.com/datapack/bookshelf-dev/version/v3.2.2-1.21
 
 **Bu Datapack:**
 ```
-gulceos-v2_4-enhanced-with-bookshelf.zip
+mc-server-toolkit-v2.7.zip
 ```
 
 ---
@@ -22,7 +22,7 @@ gulceos-v2_4-enhanced-with-bookshelf.zip
 world/
   └── datapacks/
       ├── bookshelf-dev-1_21_11-v3_2_2.zip    ← ÖNCE BU
-      └── gulceos-v2_4-enhanced.zip          ← SONRA BU
+      └── mc-server-toolkit-v2.7.zip          ← SONRA BU
 ```
 
 ⚠️ **Sıralama Önemli!** Bookshelf önce yüklenmelidir.
@@ -35,9 +35,8 @@ Oyuna gir ve şu komutları çalıştır:
 
 ```mcfunction
 /reload
-/gamerule commandBlocksWork true
-/gamerule sendCommandFeedback true
-/function main:load
+/gamerule command_blocks_work true
+/gamerule send_command_feedback true
 ```
 
 ---
