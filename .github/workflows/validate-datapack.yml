@@ -523,9 +523,9 @@ jobs:
             suspicious_patterns["^[^#]*\sop\s@[ape]\s*$"]="CRITICAL: Blanket OP grant - potential backdoor"
             suspicious_patterns["^[^#]*\sop\s@[ape]\["]="WARNING: OP grant with selector - verify legitimacy"
             
-            # Server control abuse
-            suspicious_patterns["stop"]="CRITICAL: Server shutdown command detected"
-            suspicious_patterns["restart"]="WARNING: Server restart command detected"
+            # Server control abuse (exclude function calls like namespace:stop)
+            suspicious_patterns["^[^#:]*\sstop\s*$"]="CRITICAL: Server shutdown command detected"
+            suspicious_patterns["^[^#:]*\srestart\s*$"]="WARNING: Server restart command detected"
             
             # External code execution attempts (JavaScript, command injection)
             suspicious_patterns["<script"]="CRITICAL: JavaScript injection attempt in NBT/JSON"
