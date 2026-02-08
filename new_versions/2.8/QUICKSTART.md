@@ -91,7 +91,7 @@ Duvarlara bakın - particle'lar görünüyor mu? ✨
 
 ✅ Gamerule'ları tekrar kontrol et:
 ```mcfunction
-/gamerule commandBlocksWork true
+/gamerule command_blocks_work true
 ```
 
 ### Yetki Hataları
