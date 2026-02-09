@@ -22,10 +22,10 @@ jobs:
       - name: Get Latest Version
         id: version
         run: |
-          latest=$(ls -1 new_versions/ | sort -V | tail -n 1)
+          latest=$(ls -1 new_versions/ 2>/dev/null | sort -V | tail -n 1)
 
           if [ -z "$latest" ]; then
-            echo "No version folders found."
+            echo "No version folders found"
             exit 1
           fi
 
@@ -37,21 +37,21 @@ jobs:
           DIR="new_versions/${{ steps.version.outputs.mc_version }}/datapack"
 
           if [ ! -d "$DIR" ]; then
-            echo "Missing datapack dir."
+            echo "Missing datapack dir"
             exit 1
           fi
 
           if [ ! -f "$DIR/pack.mcmeta" ]; then
-            echo "Missing pack.mcmeta."
+            echo "Missing pack.mcmeta"
             exit 1
           fi
 
           if [ ! -d "$DIR/data" ]; then
-            echo "Missing data folder."
+            echo "Missing data folder"
             exit 1
           fi
 
-          echo "Valid datapack."
+          echo "Datapack valid"
 
       - name: Create ZIP
         run: |
