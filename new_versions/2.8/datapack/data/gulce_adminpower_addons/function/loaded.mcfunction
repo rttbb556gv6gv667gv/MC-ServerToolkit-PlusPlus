@@ -26,7 +26,7 @@ scoreboard players set #1000 math 1000
 # ==========================================
 # STORAGE SİSTEMİ
 # ==========================================
-data merge storage custom:data {ayarlar:{debug:true,versiyon:"v2.9"},matematik:{sonuclar:[]}}
+data merge storage custom:data {ayarlar:{debug:true,versiyon:"v2.8"},matematik:{sonuclar:[]}}
 
 # ==========================================
 # MATEMATİK ÖRNEKLERİ
@@ -108,3 +108,4 @@ execute as @a at @s run playsound minecraft:entity.player.levelup master @s ~ ~ 
 # SCHEDULE İLE OTOMATİK GÜNCELLEME
 # ==========================================
 schedule function custom:auto_update 20t
+
