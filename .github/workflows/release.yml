@@ -28,28 +28,21 @@ jobs:
             exit 1
           fi
 
+          build="${GITHUB_RUN_NUMBER}"
+          tag="${latest}-build${build}"
+
           echo "mc_version=$latest" >> $GITHUB_OUTPUT
-          echo "tag_name=$latest" >> $GITHUB_OUTPUT
-          echo "Found version: $latest"
+          echo "tag_name=$tag" >> $GITHUB_OUTPUT
+
+          echo "Using tag: $tag"
 
       - name: Validate Datapack
         run: |
           DIR="new_versions/${{ steps.version.outputs.mc_version }}/datapack"
 
-          if [ ! -d "$DIR" ]; then
-            echo "Datapack folder missing"
-            exit 1
-          fi
-
-          if [ ! -f "$DIR/pack.mcmeta" ]; then
-            echo "pack.mcmeta missing"
-            exit 1
-          fi
-
-          if [ ! -d "$DIR/data" ]; then
-            echo "data folder missing"
-            exit 1
-          fi
+          [ -d "$DIR" ] || exit 1
+          [ -f "$DIR/pack.mcmeta" ] || exit 1
+          [ -d "$DIR/data" ] || exit 1
 
       - name: Create ZIP
         run: |
@@ -60,27 +53,14 @@ jobs:
           cd "$DIR"
           zip -r "$GITHUB_WORKSPACE/$ZIP" .
 
-      - name: Delete old release if exists
-        run: |
-          TAG="${{ steps.version.outputs.tag_name }}"
-
-          if gh release view "$TAG" > /dev/null 2>&1; then
-            echo "Deleting old release $TAG"
-            gh release delete "$TAG" -y
-          else
-            echo "No old release found"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create new release
-        run: |
-          VERSION="${{ steps.version.outputs.mc_version }}"
-          TAG="${{ steps.version.outputs.tag_name }}"
-          ZIP="mc-server-toolkit-$VERSION.zip"
-
-          gh release create "$TAG" "$ZIP" \
-            --title "MC Server Toolkit $VERSION" \
-            --notes "Release for Minecraft $VERSION"
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag_name }}
+          name: MC Server Toolkit ${{ steps.version.outputs.tag_name }}
+          body: |
+            Release for Minecraft ${{ steps.version.outputs.mc_version }}
+            Build: ${{ github.run_number }}
+          files: mc-server-toolkit-${{ steps.version.outputs.mc_version }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
