@@ -182,10 +182,71 @@
 
 <h2>❓ Sorun mu Var?</h2>
 
+
+
 <h3>"Function not found" Hatası</h3>
+
+<p>Bu hata, Minecraft’ın ilgili fonksiyonu yükleyemediği anlamına gelir. Sebep sadece yanlış klasör değil, farklı teknik sorunlar da olabilir.</p>
+
+<h4>Olası Nedenler</h4>
+<ul>
+  <li>Datapack yanlış klasöre yerleştirilmiş olabilir</li>
+  <li>Zip içinde fazladan klasör olabilir</li>
+  <li>Fonksiyon dosyasında komut hatası olabilir</li>
+  <li><code>pack_format</code> sürümü uyumsuz olabilir</li>
+  <li>Namespace veya dosya adı yanlış olabilir</li>
+</ul>
+
+<h4>1️⃣ Datapack yüklü mü kontrol et</h4>
 <pre><code>/datapack list
 </code></pre>
-<p>"Bookshelf" listede görünmeli.</p>
+
+<p>Listede şu ikisi görünmelidir:</p>
+<ul>
+  <li><code>bookshelf</code></li>
+  <li><code>mc-server-toolkit</code></li>
+</ul>
+
+<h4>2️⃣ Klasör yapısını kontrol et</h4>
+<p>Doğru yapı:</p>
+
+<pre><code>saves/
+  └── &lt;world-name&gt;/
+      └── datapacks/
+          ├── bookshelf-dev-1_21_11-v3_2_2.zip
+          └── mc-server-toolkit-v2.8.zip
+</code></pre>
+
+<p>Zip içinde ekstra klasör olmamalıdır.</p>
+
+<h4>3️⃣ Minecraft sürümünü kontrol et</h4>
+<pre><code>/version
+</code></pre>
+
+<p>Bu datapack için <b>1.21.6 veya üzeri</b> gereklidir.</p>
+
+<h4>4️⃣ Log dosyasını kontrol et</h4>
+<p>Fonksiyon yükleme hataları genelde chat’te görünmez. Oyunu kapatıp <code>latest.log</code> dosyasını kontrol edin.</p>
+
+<p><b>Konum:</b></p>
+<pre><code>.minecraft/logs/latest.log
+</code></pre>
+
+<p>Burada kırmızı hata satırları varsa, fonksiyon içinde komut hatası olabilir.</p>
+
+<h4>5️⃣ Datapack’i yeniden yükle</h4>
+<pre><code>/reload
+</code></pre>
+
+
+
+
+
+
+
+
+
+
 
 <h3>Komut Blokları Çalışmıyor</h3>
 <p><b>Singleplayer:</b></p>
