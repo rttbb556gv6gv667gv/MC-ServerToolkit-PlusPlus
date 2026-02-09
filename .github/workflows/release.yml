@@ -21,16 +21,13 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Debug - Check structure
+      - name: Check structure
         run: |
           echo "=== Repository structure ==="
           ls -la
           echo ""
           echo "=== new_versions folder ==="
           ls -la new_versions/ || echo "new_versions folder not found!"
-          echo ""
-          echo "=== All version folders ==="
-          ls -1 new_versions/ || echo "Empty"
           echo ""
           echo "=== Datapack folders ==="
           find new_versions -type d -name "datapack" || echo "No datapack folders found!"
@@ -41,7 +38,7 @@ jobs:
           latest=$(ls -1 new_versions/ 2>/dev/null | sort -V | tail -n 1)
           
           if [ -z "$latest" ]; then
-            echo "::error::No version folders found in new_versions/"
+            echo "::error::No version folders found"
             exit 1
           fi
           
@@ -56,29 +53,28 @@ jobs:
           fi
           
           echo "pack_format=$pack_format" >> $GITHUB_OUTPUT
-          echo "Found version: $latest (pack format: $pack_format)"
+          echo "Found: $latest (format: $pack_format)"
       
       - name: Validate Datapack
         run: |
           DIR="new_versions/${{ steps.version.outputs.mc_version }}/datapack"
           
           if [ ! -d "$DIR" ]; then
-            echo "::error::Datapack directory not found: $DIR"
+            echo "::error::Missing datapack dir"
             exit 1
           fi
           
           if [ ! -f "$DIR/pack.mcmeta" ]; then
-            echo "::error::pack.mcmeta not found"
+            echo "::error::Missing pack.mcmeta"
             exit 1
           fi
           
           if [ ! -d "$DIR/data" ]; then
-            echo "::error::data folder not found"
+            echo "::error::Missing data folder"
             exit 1
           fi
           
-          echo "✅ Datapack structure valid"
-          ls -R "$DIR" | head -30
+          echo "Valid datapack"
       
       - name: Create ZIP
         run: |
@@ -89,56 +85,30 @@ jobs:
           zip -r "$GITHUB_WORKSPACE/$ZIP" . -x "*.git*" -x ".DS_Store"
           
           cd "$GITHUB_WORKSPACE"
-          echo "ZIP created:"
           ls -lh "$ZIP"
       
       - name: Generate Changelog
-        id: changelog
         run: |
           PREV=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           
           if [ -z "$PREV" ]; then
-            CHANGES="Initial release for Minecraft ${{ steps.version.outputs.mc_version }}"
+            echo "Initial release for Minecraft ${{ steps.version.outputs.mc_version }}" > changelog.txt
           else
-            CHANGES=$(git log ${PREV}..HEAD --oneline --no-merges -- "new_versions/${{ steps.version.outputs.mc_version }}/datapack/**" 2>/dev/null | sed 's/^/- /' || echo "- Updated datapack")
+            CHANGES=$(git log ${PREV}..HEAD --oneline --no-merges -- "new_versions/${{ steps.version.outputs.mc_version }}/datapack/**" 2>/dev/null | sed 's/^/- /' || echo "- Updated")
+            echo "$CHANGES" > changelog.txt
           fi
           
-          echo "changelog<<EOF" >> $GITHUB_OUTPUT
-          echo "$CHANGES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-      
-      - name: Delete existing release
-        continue-on-error: true
-        run: |
-          gh release delete "${{ steps.version.outputs.tag_name }}" --yes 2>/dev/null || true
-          git push --delete origin "${{ steps.version.outputs.tag_name }}" 2>/dev/null || true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          cat changelog.txt
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag' || github.event_name == 'workflow_dispatch'
         with:
           tag_name: ${{ steps.version.outputs.tag_name }}
           name: "MC Server Toolkit v${{ steps.version.outputs.mc_version }}"
-          body: |
-            ## 📦 Minecraft Server Toolkit Datapack
-            
-            **Minecraft Version:** `${{ steps.version.outputs.mc_version }}`
-            **Pack Format:** `${{ steps.version.outputs.pack_format }}`
-            
-            ### 📝 Changes
-            ${{ steps.changelog.outputs.changelog }}
-            
-            ### 🚀 Installation
-            1. Download ZIP below
-            2. Place in `datapacks` folder
-            3. Run `/reload`
-            
-            ### 🐛 Issues
-            [Report here](https://github.com/${{ github.repository }}/issues)
+          body_path: changelog.txt
           files: mc-server-toolkit-${{ steps.version.outputs.mc_version }}.zip
           draft: false
-          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -148,4 +118,3 @@ jobs:
           echo "## ✅ Release Created!" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.version.outputs.mc_version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Tag:** ${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
