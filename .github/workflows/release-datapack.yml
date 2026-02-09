@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'new_versions/**/datapack/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -18,19 +21,19 @@ jobs:
         with:
           fetch-depth: 0
       
-      - name: Debug - Show repository structure
+      - name: Debug - Check structure
         run: |
-          echo "=== Root directory ==="
+          echo "=== Repository structure ==="
           ls -la
           echo ""
           echo "=== new_versions folder ==="
-          ls -la new_versions/ || echo "ERROR: new_versions not found!"
+          ls -la new_versions/ || echo "new_versions folder not found!"
           echo ""
-          echo "=== All folders in new_versions ==="
+          echo "=== All version folders ==="
           ls -1 new_versions/ || echo "Empty"
           echo ""
-          echo "=== Looking for datapack folders ==="
-          find new_versions -type d -name "datapack" 2>/dev/null || echo "No datapack"
+          echo "=== Datapack folders ==="
+          find new_versions -type d -name "datapack" || echo "No datapack folders found!"
       
       - name: Get Latest Version
         id: version
@@ -38,7 +41,7 @@ jobs:
           latest=$(ls -1 new_versions/ 2>/dev/null | sort -V | tail -n 1)
           
           if [ -z "$latest" ]; then
-            echo "::error::No version folders found"
+            echo "::error::No version folders found in new_versions/"
             exit 1
           fi
           
@@ -53,17 +56,28 @@ jobs:
           fi
           
           echo "pack_format=$pack_format" >> $GITHUB_OUTPUT
-          echo "Found: $latest (format: $pack_format)"
+          echo "Found version: $latest (pack format: $pack_format)"
       
       - name: Validate Datapack
         run: |
           DIR="new_versions/${{ steps.version.outputs.mc_version }}/datapack"
           
-          [ ! -d "$DIR" ] && echo "::error::Missing datapack dir" && exit 1
-          [ ! -f "$DIR/pack.mcmeta" ] && echo "::error::Missing pack.mcmeta" && exit 1
-          [ ! -d "$DIR/data" ] && echo "::error::Missing data folder" && exit 1
+          if [ ! -d "$DIR" ]; then
+            echo "::error::Datapack directory not found: $DIR"
+            exit 1
+          fi
           
-          echo "Valid datapack"
+          if [ ! -f "$DIR/pack.mcmeta" ]; then
+            echo "::error::pack.mcmeta not found"
+            exit 1
+          fi
+          
+          if [ ! -d "$DIR/data" ]; then
+            echo "::error::data folder not found"
+            exit 1
+          fi
+          
+          echo "✅ Datapack structure valid"
           ls -R "$DIR" | head -30
       
       - name: Create ZIP
@@ -75,6 +89,7 @@ jobs:
           zip -r "$GITHUB_WORKSPACE/$ZIP" . -x "*.git*" -x ".DS_Store"
           
           cd "$GITHUB_WORKSPACE"
+          echo "ZIP created:"
           ls -lh "$ZIP"
       
       - name: Generate Changelog
@@ -85,7 +100,7 @@ jobs:
           if [ -z "$PREV" ]; then
             CHANGES="Initial release for Minecraft ${{ steps.version.outputs.mc_version }}"
           else
-            CHANGES=$(git log ${PREV}..HEAD --oneline --no-merges -- "new_versions/${{ steps.version.outputs.mc_version }}/datapack/**" 2>/dev/null | sed 's/^/- /' || echo "- Updated")
+            CHANGES=$(git log ${PREV}..HEAD --oneline --no-merges -- "new_versions/${{ steps.version.outputs.mc_version }}/datapack/**" 2>/dev/null | sed 's/^/- /' || echo "- Updated datapack")
           fi
           
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
@@ -133,3 +148,4 @@ jobs:
           echo "## ✅ Release Created!" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.version.outputs.mc_version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Tag:** ${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
