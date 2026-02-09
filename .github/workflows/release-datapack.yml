@@ -1,17 +1,10 @@
 name: Release Datapack
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'new_versions/**/datapack/**'
   workflow_dispatch:
 
 permissions:
   contents: write
-  packages: write
-  actions: write
 
 jobs:
   release:
@@ -22,7 +15,23 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Debug - Show repository structure
+        run: |
+          echo "=== Root directory ==="
+          ls -la
+          echo ""
+          echo "=== new_versions folder ==="
+          ls -la new_versions/ || echo "ERROR: new_versions not found!"
+          echo ""
+          echo "=== All folders in new_versions ==="
+          ls -1 new_versions/ || echo "Empty or not found"
+          echo ""
+          echo "=== Looking for datapack folders ==="
+          find new_versions -type d -name "datapack" 2>/dev/null || echo "No datapack folders found"
+          echo ""
+          echo "=== Full tree ==="
+          find new_versions -type f 2>/dev/null | head -20 || echo "No files"
       
       - name: Get Latest Version
         id: version
@@ -30,33 +39,53 @@ jobs:
           latest=$(ls -1 new_versions/ 2>/dev/null | sort -V | tail -n 1)
           
           if [ -z "$latest" ]; then
-            echo "::error::No version folders found"
+            echo "::error::No version folders found in new_versions/"
+            echo "Available folders:"
+            ls -la new_versions/ || echo "new_versions does not exist"
             exit 1
           fi
           
           echo "mc_version=$latest" >> $GITHUB_OUTPUT
           echo "tag_name=v$latest" >> $GITHUB_OUTPUT
+          echo "::notice::Found version: $latest"
           
           mcmeta="new_versions/$latest/datapack/pack.mcmeta"
           if [ -f "$mcmeta" ]; then
             pack_format=$(grep -oP '"pack_format"\s*:\s*\K\d+' "$mcmeta" 2>/dev/null || echo "1")
           else
+            echo "::warning::pack.mcmeta not found at $mcmeta"
             pack_format="1"
           fi
           
           echo "pack_format=$pack_format" >> $GITHUB_OUTPUT
-          echo "Found: $latest (format: $pack_format)"
       
       - name: Validate Datapack
         run: |
           DIR="new_versions/${{ steps.version.outputs.mc_version }}/datapack"
           
-          [ ! -d "$DIR" ] && echo "::error::Missing datapack dir" && exit 1
-          [ ! -f "$DIR/pack.mcmeta" ] && echo "::error::Missing pack.mcmeta" && exit 1
-          [ ! -d "$DIR/data" ] && echo "::error::Missing data folder" && exit 1
+          echo "Checking directory: $DIR"
           
-          echo "Valid datapack structure"
-          ls -R "$DIR"
+          if [ ! -d "$DIR" ]; then
+            echo "::error::Datapack directory not found: $DIR"
+            echo "Directory structure:"
+            ls -R "new_versions/${{ steps.version.outputs.mc_version }}/" || echo "Version folder not found"
+            exit 1
+          fi
+          
+          if [ ! -f "$DIR/pack.mcmeta" ]; then
+            echo "::error::pack.mcmeta not found"
+            ls -la "$DIR"
+            exit 1
+          fi
+          
+          if [ ! -d "$DIR/data" ]; then
+            echo "::error::data folder not found"
+            ls -la "$DIR"
+            exit 1
+          fi
+          
+          echo "✅ Datapack structure is valid"
+          ls -R "$DIR" | head -50
       
       - name: Create ZIP
         run: |
@@ -67,8 +96,11 @@ jobs:
           zip -r "$GITHUB_WORKSPACE/$ZIP" . -x "*.git*" -x ".DS_Store"
           
           cd "$GITHUB_WORKSPACE"
+          echo "ZIP created:"
           ls -lh "$ZIP"
-          unzip -l "$ZIP"
+          echo ""
+          echo "ZIP contents (first 30 lines):"
+          unzip -l "$ZIP" | head -30
       
       - name: Generate Changelog
         id: changelog
@@ -88,10 +120,10 @@ jobs:
       - name: Delete existing release if exists
         continue-on-error: true
         run: |
-          gh release delete "${{ steps.version.outputs.tag_name }}" --yes || true
-          git push --delete origin "${{ steps.version.outputs.tag_name }}" || true
+          gh release delete "${{ steps.version.outputs.tag_name }}" --yes 2>/dev/null || true
+          git push --delete origin "${{ steps.version.outputs.tag_name }}" 2>/dev/null || true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -118,8 +150,8 @@ jobs:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          generate_release_notes: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Summary
         if: success()
@@ -127,3 +159,4 @@ jobs:
           echo "## ✅ Release Created!" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.version.outputs.mc_version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Tag:** ${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.tag_name }}" >> $GITHUB_STEP_SUMMARY
