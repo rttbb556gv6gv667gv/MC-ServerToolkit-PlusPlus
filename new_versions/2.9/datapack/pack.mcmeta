@@ -77,6 +77,10 @@
       {
         "namespace": "cooldown2",
         "path": ".*\\.(txt|md|log|bak|tmp|js|html|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
+      },
+      {
+        "namespace": "admin",
+        "path": ".*\\.(txt|md|log|bak|tmp|js|html|tsx|sh|c|css|exe|jar|zip|apk|cmd|bat|py)$"
       }
     ]
   },
