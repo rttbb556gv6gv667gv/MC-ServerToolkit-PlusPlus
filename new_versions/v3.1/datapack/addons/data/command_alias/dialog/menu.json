@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:multi_action",
+  "title": "⚡ Command Aliases",
+  "body": {
+    "type": "minecraft:plain_message",
+    "contents": "Hızlı komut kısayolları. Cooldown süresi var!"
+  },
+  "inputs": [
+    {
+      "type": "minecraft:single_option",
+      "key": "alias",
+      "label": "Bir alias seçin:",
+      "options": [
+        { "id": "1", "display": "❤ Heal & Feed" },
+        { "id": "2", "display": "🗑 Clear & Announce" },
+        { "id": "3", "display": "✈ TP with Notify" },
+        { "id": "4", "display": "⚡ Creative + Effects" },
+        { "id": "5", "display": "🎉 Event Preparation" },
+        { "id": "6", "display": "❄ Quick Freeze" },
+        { "id": "7", "display": "🛡 Moderator Toolkit" }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "label": "✅ Uygula",
+      "action": {
+        "type": "minecraft:dynamic/run_command",
+        "template": "/trigger ca.trigger set $(alias)"
+      }
+    }
+  ]
+}

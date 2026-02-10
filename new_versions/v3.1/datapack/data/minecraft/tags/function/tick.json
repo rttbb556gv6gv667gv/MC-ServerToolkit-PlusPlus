@@ -1,0 +1,7 @@
+{
+  "values": [
+    "loop_manager:tick",
+    "main:loop/init",
+    "scheduler:tick"
+  ]
+}
