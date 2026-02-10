@@ -1,4 +1,0 @@
-$give @s minecraft:carrot_on_a_stick[custom_name={"text":"Bilgi (Info)"},custom_data={CA:{Clickable:1b,command:"execute as @a[name=$(NAME)] run function player_tracker:detailed_stats with entity @s SelectedItem.components.\"minecraft:custom_data\".CA.data",data:{player:"$(NAME)"}}}]
-$give @s minecraft:carrot_on_a_stick[custom_name={"text":"GULCE MENU"},custom_data={CA:{Clickable:1b,command:"execute as @a[name=$(NAME)] run function glc_menu:handler/builder/main"}}]
-$give @s minecraft:carrot_on_a_stick[custom_name={"text":"Admin Eylemleri (Admin Actions)"},custom_data={CA:{Clickable:1b,command:"execute as @a[name=$(NAME)] run function actions:menu/open"}}]
-$give @s minecraft:carrot_on_a_stick[custom_name={"text":"Test edici (Tester)"},custom_data={CA:{Clickable:1b,command:"execute as @a[name=$(NAME)] run say ✅"}}]
