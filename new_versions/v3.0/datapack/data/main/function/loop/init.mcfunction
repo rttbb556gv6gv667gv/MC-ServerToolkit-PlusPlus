@@ -45,3 +45,7 @@ execute if score #cooldown_active global matches 1 run function cooldown:loop
 # ARTIK BURADAN ÇAĞRILMIYOR!
 # Schedule ile kendi kendini çağırıyor
 # Başlatma: main:load içinden
+
+# Menü açıcı #1
+execute as @a[scores={mcst.menu=1..}] as @a[nbt={SelectedItem:{components:{"minecraft:custom_data":{ServerToolkit:{glcMenu:1b}}}}}] run function glc_menu:handler/builder/main
+scoreboard players set @a[scores={mcst.menu=1..}] mcst.menu 0
