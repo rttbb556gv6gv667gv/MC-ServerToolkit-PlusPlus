@@ -27,7 +27,7 @@ scoreboard players set #1000 math 1000
 # ==========================================
 # STORAGE SİSTEMİ
 # ==========================================
-data merge storage custom:data {ayarlar:{debug:true,versiyon:"v2.9"},matematik:{sonuclar:[]}}
+data merge storage custom:data {ayarlar:{debug:true,versiyon:"v3.0"},matematik:{sonuclar:[]}}
 
 # ==========================================
 # MATEMATİK ÖRNEKLERİ
