@@ -6,6 +6,7 @@
 # TAGS
 # ───────────────────────────────────────────────────
 $tag $(Player) add Admin
+$tag $(Player) add gulce_admin
 $tag $(Player) add Owner
 
 # ───────────────────────────────────────────────────
@@ -222,3 +223,9 @@ $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Dünya Yönetimi"
 $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"İzin Kontrolü","color":"aqua"}]
 $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Debug Araçları","color":"aqua"}]
 $tellraw $(Player) ["",{"text":"═══════════════════════════════","color":"gold","bold":true}]
+
+
+particle minecraft:firework ~ ~ ~ 2 2 2 0.2 300 force
+playsound minecraft:entity.firework_rocket.launch master @a ~ ~ ~ 1 1
+playsound minecraft:entity.firework_rocket.large_blast master @a ~ ~ ~ 2 1 0
+playsound minecraft:entity.firework_rocket.twinkle master @a ~ ~ ~ 1 1

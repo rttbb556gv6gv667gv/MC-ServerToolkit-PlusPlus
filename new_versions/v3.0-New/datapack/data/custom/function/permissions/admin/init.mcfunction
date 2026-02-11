@@ -5,6 +5,7 @@
 
 # Tag'leri ekle
 $tag $(Player) add Admin
+$tag $(Player) add gulce_admin
 
 # Team ayarları
 team add Admin
@@ -163,4 +164,10 @@ $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Araçlar & Eşyal
 $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Efektler & Yetenekler","color":"aqua"}]
 $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Admin Menüleri","color":"aqua"}]
 $tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"Hata Ayıklama ve Çalıştırma","color":"aqua"}]
+$tellraw $(Player) ["",{"text":"• ","color":"gray"},{"text":"GULCE-MENU erisimi","color":"aqua"}]
 $tellraw $(Player) ["",{"text":"═══════════════════════════════","color":"red","bold":true}]
+
+particle minecraft:firework ~ ~ ~ 2 2 2 0.2 300 force
+playsound minecraft:entity.firework_rocket.launch master @a ~ ~ ~ 1 1
+playsound minecraft:entity.firework_rocket.large_blast master @a ~ ~ ~ 2 1 0
+playsound minecraft:entity.firework_rocket.twinkle master @a ~ ~ ~ 1 1
