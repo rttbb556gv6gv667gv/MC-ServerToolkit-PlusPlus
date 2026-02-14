@@ -1,0 +1,21 @@
+name: Emergency Revert
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  revert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Revert bad commit
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Bozuk commit'i revert et
+          git revert 56d6335 --no-edit || echo "Already reverted or conflict"
+          
+          git push
