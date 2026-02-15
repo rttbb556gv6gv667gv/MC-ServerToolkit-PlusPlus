@@ -6,12 +6,10 @@
 $execute unless data storage mc:handler data.groups[{id:"$(group_id)"}] run tellraw @s ["",{"text":"[GULCE] ","color":"red","bold":true},{"text":"❌ HATA: Grup bulunamadı - $(group_id)","color":"red"}]
 $execute unless data storage mc:handler data.groups[{id:"$(group_id)"}] run return 0
 
+$execute as @s unless entity $(player) run return run tellraw @s ["",{"text":"[GULCE] ","color":"red","bold":true},{"text":"❌ HATA: Grup bulunamadı - $(group_id)","color":"red"}]
+
 # Oyuncu zaten üye mi kontrol et
 $execute store success score #not_member gulce_id run data modify storage mc:_ temp.check_member set from storage mc:handler data.groups[{id:"$(group_id)"}].members[{value:"$(player)"}]
-
-# Zaten üyeyse uyar
-$execute if score #not_member gulce_id matches 0 run tellraw @s ["",{"text":"[GULCE] ","color":"yellow","bold":true},{"text":"⚠️ Oyuncu zaten bu grupta: $(player)","color":"yellow"}]
-execute if score #not_member gulce_id matches 0 run return 0
 
 # Üye ekle
 $data modify storage mc:handler data.groups[{id:"$(group_id)"}].members append value "$(player)"
@@ -28,4 +26,4 @@ $tellraw @s ["",{"text":"  👥 Grup: ","color":"gray"},{"text":"$(group_id)","c
 $tellraw $(player) ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"📥 Gruba eklendiniz: ","color":"green"},{"text":"$(group_id)","color":"yellow"}]
 
 # Log
-tellraw @a[tag=gulce_admin] ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"Üye eklendi: ","color":"gray"},{"text":"$(player)","color":"yellow"},{"text":" → ","color":"gray"},{"text":"$(group_id)","color":"aqua"}]
+$tellraw @a[tag=gulce_admin] ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"Üye eklendi: ","color":"gray"},{"text":"$(player)","color":"yellow"},{"text":" → ","color":"gray"},{"text":"$(group_id)","color":"aqua"}]

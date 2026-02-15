@@ -24,4 +24,4 @@ $tellraw @s ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"🗑️ 
 execute if score #member_count gulce_id matches 1.. run tellraw @s ["",{"text":"  👥 ","color":"gray"},{"score":{"name":"#member_count","objective":"gulce_id"},"color":"yellow"},{"text":" üyenin tag'leri temizlendi","color":"gray"}]
 
 # Log
-tellraw @a[tag=gulce_admin] ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"Grup silindi: ","color":"gray"},{"text":"$(id)","color":"red"}]
+$tellraw @a[tag=gulce_admin] ["",{"text":"[GULCE] ","color":"gold","bold":true},{"text":"Grup silindi: ","color":"gray"},{"text":"$(id)","color":"red"}]
